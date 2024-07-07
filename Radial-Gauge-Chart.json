@@ -1,0 +1,1096 @@
+{
+  "width": "container",
+
+  "data": { "name": "dataset" },
+  "transform": [
+    {
+      "calculate": "datum['metric(~$)']",
+      "as": "_metric_value"
+    },
+    {
+      "calculate": "datum['_metric_value']/10*180-90",
+      "as": "_needle_degrees"
+    },
+    {
+      "calculate": "datum['Seg_1']",
+      "as": "_Seg1_value"
+    },
+    {
+      "calculate": "datum['Seg_1_n']",
+      "as": "_Seg1_name"
+    },
+    {
+      "calculate": "datum['Seg_2']",
+      "as": "_Seg2_value"
+    },
+    {
+      "calculate": "datum['Seg_2_n']",
+      "as": "_Seg2_name"
+    },
+    {
+      "calculate": "datum['Seg_3']",
+      "as": "_Seg3_value"
+    },
+    {
+      "calculate": "datum['Seg_3_n']",
+      "as": "_Seg3_name"
+    },
+    {
+      "calculate": "datum['Seg_4']",
+      "as": "_Seg4_value"
+    },
+    {
+      "calculate": "datum['Seg_4_n']",
+      "as": "_Seg4_name"
+    },
+    {
+      "calculate": "datum['Seg_0']",
+      "as": "_Seg0_value"
+    },
+    {
+      "calculate": "datum['Seg_10']",
+      "as": "_Seg10_value"
+    },
+    {
+      "calculate": "180",
+      "as": "_degrees"
+    },
+    {
+      "calculate": "360 - ( datum['_degrees'] / 2 )",
+      "as": "_arc_start_degrees"
+    },
+    {
+      "calculate": "0 + ( datum['_degrees'] / 2 )",
+      "as": "_arc_end_degrees"
+    },
+    {
+      "calculate": "2 * PI * ( datum['_arc_start_degrees'] - 360 ) / 360",
+      "as": "_arc_start_radians"
+    },
+    {
+      "calculate": "2 * PI * datum['_arc_end_degrees'] / 360",
+      "as": "_arc_end_radians"
+    },
+    {
+      "calculate": "datum['_arc_end_radians'] - datum['_arc_start_radians']",
+      "as": "_arc_total_radians"
+    },
+    {
+      "calculate": "datum['_arc_start_radians']",
+      "as": "_ring_start_radians"
+    },
+    {
+      "calculate": "datum['_arc_start_radians'] + ( datum['_arc_total_radians'] * datum['_Seg1_value']/10 )",
+      "as": "Seg1_ring_end_radians"
+    },
+    {
+      "calculate": "datum['_arc_start_radians'] + ( datum['_arc_total_radians'] * datum['_Seg2_value']/10 )",
+      "as": "Seg2_ring_end_radians"
+    },
+    {
+      "calculate": "datum['_arc_start_radians'] + ( datum['_arc_total_radians'] * datum['_Seg3_value']/10 )",
+      "as": "Seg3_ring_end_radians"
+    },
+    {
+      "calculate": "datum['_arc_start_radians'] + ( datum['_arc_total_radians'] * datum['_Seg4_value']/10 )",
+      "as": "Seg4_ring_end_radians"
+    },
+    {
+      "calculate": "datum['_arc_start_radians'] + ( datum['_arc_total_radians'] * datum['_metric_value'] )",
+      "as": "_ring_end_radians"
+    }
+  ],
+  "params": [
+    {
+      "name": "_rotation_radians",
+      "expr": "-PI/2"
+    },
+    {
+      "name": "_ring_max",
+      "value": 120
+    },
+    {
+      "name": "_ring_width",
+      "value": 60
+    },
+    {
+      "name": "_ring_gap",
+      "value": 5
+    },
+    {
+      "name": "_ring0_percent",
+      "value": 100
+    },
+    {
+      "name": "_ring0_outer",
+      "expr": "_ring_max + 2"
+    },
+    {
+      "name": "_ring0_inner",
+      "expr": "_ring_max + 1"
+    },
+    {
+      "name": "_ring_outer",
+      "expr": "_ring0_inner - _ring_gap"
+    },
+    {
+      "name": "_ring_inner",
+      "expr": "_ring_outer - _ring_width"
+    },
+    {
+      "name": "_ring_middle",
+      "expr": "( _ring_outer + _ring_inner ) / 2"
+    },
+    {
+      "name": "_SubSeg1_value",
+      "expr": "1"
+    }
+  ],
+  "layer": [
+    {
+      "name": "RADIAL_GAUGE",
+      "layer": [
+        {
+          "name": "RING OPAQUE BACKGROUND",
+          "mark": {
+            "type": "arc",
+            "radius": {
+              "expr": "_ring_outer"
+            },
+            "radius2": {
+              "expr": "_ring_inner"
+            },
+            "theta": {
+              "expr": "datum['_arc_start_radians']"
+            },
+            "theta2": {
+              "expr": "datum['_arc_end_radians']"
+            },
+            "cornerRadius": 0,
+            "color": "#5aa06f"
+          }
+        },
+        {
+          "name": "Seg1_RING",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer"
+            },
+            "radius2": {
+              "expr": "_ring_inner"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']"
+            },
+            "theta2": {
+              "expr": "datum['Seg1_ring_end_radians']"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#FF0000"
+                },
+                {
+                  "offset": 1,
+                  "color": "#FF0000"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Seg2_RING",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer"
+            },
+            "radius2": {
+              "expr": "_ring_inner"
+            },
+            "theta": {
+              "expr": "datum['Seg1_ring_end_radians']"
+            },
+            "theta2": {
+              "expr": "datum['Seg2_ring_end_radians']"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#FFBF01"
+                },
+                {
+                  "offset": 1,
+                  "color": "#FFBF01"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Seg3_RING",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer"
+            },
+            "radius2": {
+              "expr": "_ring_inner"
+            },
+            "theta": {
+              "expr": "datum['Seg2_ring_end_radians']"
+            },
+            "theta2": {
+              "expr": "datum['Seg3_ring_end_radians']"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#92D050"
+                },
+                {
+                  "offset": 1,
+                  "color": "#92D050"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Seg4_RING",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer"
+            },
+            "radius2": {
+              "expr": "_ring_inner"
+            },
+            "theta": {
+              "expr": "datum['Seg3_ring_end_radians']"
+            },
+            "theta2": {
+              "expr": "datum['Seg4_ring_end_radians']"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#2EB62C"
+                },
+                {
+                  "offset": 1,
+                  "color": "#2EB62C"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "SubRING1",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer+60"
+            },
+            "radius2": {
+              "expr": "_ring_inner+60"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']"
+            },
+            "theta2": {
+              "expr": "datum['_ring_start_radians']+0.309"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#E6E6E6"
+                },
+                {
+                  "offset": 1,
+                  "color": "#E6E6E6"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "SubRING2",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer+60"
+            },
+            "radius2": {
+              "expr": "_ring_inner+60"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+0.309"
+            },
+            "theta2": {
+              "expr": "datum['_ring_start_radians']+0.618"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#BFBFBF"
+                },
+                {
+                  "offset": 1,
+                  "color": "#BFBFBF"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "SubRING3",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer+60"
+            },
+            "radius2": {
+              "expr": "_ring_inner+60"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+0.618"
+            },
+            "theta2": {
+              "expr": "datum['_ring_start_radians']+0.927"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#B3B3B3"
+                },
+                {
+                  "offset": 1,
+                  "color": "#B3B3B3"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "SubRING4",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer+60"
+            },
+            "radius2": {
+              "expr": "_ring_inner+60"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+0.927"
+            },
+            "theta2": {
+              "expr": "datum['_ring_start_radians']+1.236"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#A6A6A6"
+                },
+                {
+                  "offset": 1,
+                  "color": "#A6A6A6"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "SubRING5",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer+60"
+            },
+            "radius2": {
+              "expr": "_ring_inner+60"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+1.236"
+            },
+            "theta2": {
+              "expr": "datum['_ring_start_radians']+1.545"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#999999"
+                },
+                {
+                  "offset": 1,
+                  "color": "#999999"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "SubRING6",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer+60"
+            },
+            "radius2": {
+              "expr": "_ring_inner+60"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+1.545"
+            },
+            "theta2": {
+              "expr": "datum['_ring_start_radians']+1.889"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#808080"
+                },
+                {
+                  "offset": 1,
+                  "color": "#808080"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "SubRING7",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer+60"
+            },
+            "radius2": {
+              "expr": "_ring_inner+60"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+1.889"
+            },
+            "theta2": {
+              "expr": "datum['_ring_start_radians']+2.163"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#737373"
+                },
+                {
+                  "offset": 1,
+                  "color": "#737373"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "SubRING8",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer+60"
+            },
+            "radius2": {
+              "expr": "_ring_inner+60"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+2.163"
+            },
+            "theta2": {
+              "expr": "datum['_ring_start_radians']+2.472"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#666666"
+                },
+                {
+                  "offset": 1,
+                  "color": "#666666"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "SubRING9",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer+60"
+            },
+            "radius2": {
+              "expr": "_ring_inner+60"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+2.472"
+            },
+            "theta2": {
+              "expr": "datum['_ring_start_radians']+2.781"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#404040"
+                },
+                {
+                  "offset": 1,
+                  "color": "#404040"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "SubRING10",
+          "mark": {
+            "type": "arc",
+            "tooltip": true,
+            "radius": {
+              "expr": "_ring_outer+60"
+            },
+            "radius2": {
+              "expr": "_ring_inner+60"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+2.781"
+            },
+            "theta2": {
+              "expr": "datum['_ring_start_radians']+3.14"
+            },
+            "cornerRadius": 0,
+            "color": {
+              "x1": 0,
+              "y1": 1,
+              "x2": 1,
+              "y2": 1,
+              "gradient": "linear",
+              "stops": [
+                {
+                  "offset": 0,
+                  "color": "#0D0D0D"
+                },
+                {
+                  "offset": 1,
+                  "color": "#0D0D0D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Seg1_mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 12,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "90"
+            },
+            "theta": {
+              "expr": "datum['Seg1_ring_end_radians']*1.3"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "_Seg1_name",
+              "type": "nominal",
+              "formatType": "pbiFormat"
+            }
+          }
+        },
+        {
+          "name": "Seg2_mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 12,
+            "color": "black",
+            "align": "right",
+            "radius": {
+              "expr": "90"
+            },
+            "theta": {
+              "expr": "datum['Seg2_ring_end_radians']*1.5"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "_Seg2_name",
+              "type": "nominal",
+              "formatType": "pbiFormat"
+            }
+          }
+        },
+        {
+          "name": "Seg3_mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 12,
+            "color": "black",
+            "align": "right",
+            "radius": {
+              "expr": "90"
+            },
+            "theta": {
+              "expr": "datum['Seg3_ring_end_radians']"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "_Seg3_name",
+              "type": "nominal",
+              "formatType": "pbiFormat"
+            }
+          }
+        },
+        {
+          "name": "Seg4_mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 12,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "90"
+            },
+            "theta": {
+              "expr": "datum['Seg4_ring_end_radians']*0.6"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "_Seg4_name",
+              "type": "nominal",
+              "formatType": "pbiFormat"
+            }
+          }
+        },
+        {
+          "name": "Seg0_mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 20,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "130"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']-0.07"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "_Seg0_value",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "0#"
+            }
+          }
+        },
+        {
+          "name": "SubSeg1_Mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "190"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+0.309"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "SubSeg_1",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "#"
+            }
+          }
+        },
+        {
+          "name": "SubSeg2_Mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "190"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+0.618"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "SubSeg_2",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "#"
+            }
+          }
+        },
+        {
+          "name": "SubSeg3_Mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "190"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+0.927"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "SubSeg_3",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "#"
+            }
+          }
+        },
+        {
+          "name": "SubSeg4_Mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "190"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+1.236"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "SubSeg_4",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "#"
+            }
+          }
+        },
+        {
+          "name": "SubSeg5_Mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "190"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+1.545"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "SubSeg_5",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "#"
+            }
+          }
+        },
+        {
+          "name": "SubSeg6_Mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "190"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+1.854"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "SubSeg_6",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "#"
+            }
+          }
+        },
+        {
+          "name": "SubSeg7_Mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "190"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+2.163"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "SubSeg_7",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "#"
+            }
+          }
+        },
+        {
+          "name": "SubSeg8_Mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "190"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+2.472"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "SubSeg_8",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "#"
+            }
+          }
+        },
+        {
+          "name": "SubSeg9_Mark",
+          "mark": {
+            "type": "text",
+            "fontSize": 10,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "190"
+            },
+            "theta": {
+              "expr": "datum['_ring_start_radians']+2.781"
+            }
+          },
+          "encoding": {
+            "text": {
+              "field": "SubSeg_9",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "#"
+            }
+          }
+        },
+        {
+          "name": "Max_VALUE",
+          "mark": {
+            "type": "text",
+            "fontSize": 17,
+            "color": "black",
+            "align": "center",
+            "radius": {
+              "expr": "130"
+            },
+            "dy": 140,
+            "dx": 135
+          },
+          "encoding": {
+            "text": {
+              "field": "_Seg10_value",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "#"
+            }
+          }
+        },
+        {
+          "name": "NEEDLE_SHAPE",
+          "mark": {
+            "type": "point",
+            "shape": "wedge",
+            "angle": {
+              "expr": "datum['_needle_degrees']"
+            },
+            "size": 55000,
+            "color": "#980000"
+          }
+        },
+        {
+          "name": "NEEDLE_CIRCLE",
+          "mark": {
+            "type": "arc",
+            "radius": 30,
+            "theta": {
+              "expr": "datum['_arc_end_radians']-PI"
+            },
+            "theta2": {
+              "expr": "datum['_arc_end_radians']+PI"
+            },
+            "stroke": "#980000",
+            "fill": "white",
+            "opacity": 1
+          }
+        },
+        {
+          "name": "NEEDLE_CIRCLE_2",
+          "mark": {
+            "type": "arc",
+            "radius": 90,
+            "theta": {
+              "expr": "datum['_arc_end_radians']+.05"
+            },
+            "theta2": {
+              "expr": "datum['_arc_end_radians']+3.09"
+            },
+            "stroke": "white",
+            "fill": "white",
+            "opacity": 1
+          }
+        },
+        {
+          "name": "VALUE",
+          "mark": {
+            "type": "text",
+            "fontSize": 30,
+            "color": "black",
+            "align": "center",
+            "dy": 0
+          },
+          "encoding": {
+            "text": {
+              "field": "_metric_value",
+              "type": "quantitative",
+              "formatType": "pbiFormat",
+              "format": "##.#"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
